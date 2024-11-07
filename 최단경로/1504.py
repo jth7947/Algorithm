@@ -9,18 +9,60 @@
 출력
 첫째 줄에 두 개의 정점을 지나는 최단 경로의 길이를 출력한다. 그러한 경로가 없을 때에는 -1을 출력한다."""
 
+import sys
+input = sys.stdin.readline
+INF = float("inf")
 n, e = list(map(int, input().split()))
-
-v1_board = [[float('inf') for _ in range(n)] for _ in range(n)]
-v2_board = [[float('inf') for _ in range(n)] for _ in range(n)]
+board = [[INF for _ in range(n + 1)] for _ in range(n + 1)]
 for i in range(e):
     a, b, c = list(map(int, input().split()))
-    v1_board[a - 1][b - 1] = c
-    v1_board[b - 1][a - 1] = c
-    v2_board[a - 1][b - 1] = c
-    v2_board[b - 1][a - 1] = c
+    board[a][b] = min(board[a][b], c)
+    board[b][a] = board[a][b]
 
-v1, v2 = list(map(int, input().split()))
+for i in range(n + 1):
+    board[i][i] = 0
+
+v1, v2 = map(int, input().split())
+distance1 = [INF for _ in range(n + 1)]
+distance2 = [INF for _ in range(n + 1)]
+distance1[v1] = 0
+distance2[v2] = 0
+visited1 = [False for _ in range(n + 1)]
+visited2 = [False for _ in range(n + 1)]
+
+index1 = v1
+for i in range(n):
+    distance = INF
+    for j in range(1, n + 1):
+        if distance1[j] < distance and not visited1[j]:
+            index1 = j
+            distance = distance1[j]
+    if distance == INF:
+        break
+
+    visited1[index1] = True
+    for k in range(1, n + 1):
+        if board[index1][k] != INF and not visited1[k]:
+            distance1[k] = min(distance1[k], distance1[index1] + board[index1][k])
 
 
+index2 = v2
+for i in range(n):
+    distance = INF
+    for j in range(1, n + 1):
+        if distance2[j] < distance and not visited2[j]:
+            index2 = j
+            distance = distance2[j]
+    if distance == INF:
+        break
 
+    visited2[index2] = True
+    for k in range(1, n + 1):
+        if board[index2][k] != INF and not visited2[k]:
+            distance2[k] = min(distance2[k], distance2[index2] + board[index2][k])
+
+distance = min(distance1[1] + distance1[v2] + distance2[n], distance1[n] + distance1[v2] + distance2[1])
+if distance == INF:
+    print(-1)
+else:
+    print(distance)

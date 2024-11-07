@@ -22,6 +22,4 @@ while n != k:
         queue.append((n + 1, count))
 
 
-print(n, k)
 print(visited[k])
-print(visited[:20])
